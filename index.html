@@ -1,96 +1,72 @@
+
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
-  <meta charset="utf-8">
-  <title>Generador de Códigos</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding:20px; max-width:360px; margin:auto; }
-    label { display:block; margin:12px 0 4px; }
-    select, input { width:100%; padding:8px; box-sizing:border-box; }
-    #code { margin:16px 0; font-size:1.1em; font-weight:bold; }
-    button { padding:10px 16px; font-size:1em; cursor:pointer; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tailwind base styles might be included by the CDN, but good to have some resets */
+        body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; }
+
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #reportModal, #reportModal * {
+                visibility: visible;
+            }
+            #reportModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                border: none;
+                box-shadow: none;
+                overflow: visible !important;
+            }
+            #reportModal .modal-content {
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                background-color: white !important;
+                color: black !important;
+            }
+            #reportModal h2, #reportModal h3, #reportModal p, #reportModal th, #reportModal td {
+                color: black !important;
+            }
+            #reportModal table, #reportModal th, #reportModal td {
+                border-color: #ccc !important;
+            }
+            #reportModal .bg-gray-700, #reportModal .bg-gray-800, #reportModal .bg-gray-900 {
+                 background-color: white !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body>
-
-  <h2>Generador de Códigos</h2>
-
-  <label for="sub">Elemento</label>
-  <select id="sub">
-    <option value="">-- Elegí uno --</option>
-    <option value="CPU">CPU</option>
-    <option value="M">Monitor</option>
-    <option value="T">Teclado</option>
-    <option value="MO">Mouse</option>
-    <option value="HD">HDMI</option>
-    <option value="VG">VGA</option>
-    <option value="ADP">Adaptador</option>
-    <option value="IM">Impresora</option>
-    <option value="CE">Celular</option>
-    <option value="EL">Heladera</option>
-    <option value="ME">Mesada cocina</option>
-    <option value="SS">Silletas cocina</option>
-    <option value="C">Cubículos</option>
-    <option value="E">Escritorio</option>
-    <option value="S">Silla</option>
-    <option value="A">Armario</option>
-    <option value="PZ">Pizarra</option>
-    <option value="CF">Caja fuerte</option>
-  </select>
-
-  <label for="ubi">Ubicación (piso/área)</label>
-  <input type="text" id="ubi" value="9">
-
-  <div id="code">Código generado: —</div>
-  <button onclick="registro()">Generar y Guardar</button>
-
-  <script>
-    // Configuración subcódigo → {parent, vida útil}
-    const CONFIG = {
-      CPU:{p:'I',v:'02'}, M:{p:'I',v:'02'}, T:{p:'I',v:'02'}, MO:{p:'I',v:'02'},
-      P:{p:'I',v:'02'}, HD:{p:'I',v:'02'}, VG:{p:'I',v:'02'}, ADP:{p:'I',v:'02'},
-      IM:{p:'I',v:'02'}, CE:{p:'I',v:'02'}, EL:{p:'A',v:'02'}, ME:{p:'A',v:'02'},
-      SS:{p:'A',v:'05'}, C:{p:'A',v:'05'}, E:{p:'A',v:'05'}, S:{p:'A',v:'05'},
-      A:{p:'A',v:'05'}, PZ:{p:'A',v:'05'}, CF:{p:'A',v:'05'}
-    };
-
-    const subEl = document.getElementById('sub');
-    const ubiEl = document.getElementById('ubi');
-    const out   = document.getElementById('code');
-
-    function actualizar() {
-      const sub = subEl.value, ub = ubiEl.value.trim();
-      if (!sub || !ub || !CONFIG[sub]) {
-        out.textContent = 'Código generado: —';
-        return;
-      }
-      const {p,v} = CONFIG[sub];
-      const prefix = `AF${p}${sub}${ub}${v}`;
-      const key = prefix;
-      const cnt = parseInt(localStorage.getItem(key) || '0', 10) + 1;
-      const seq = String(cnt).padStart(3, '0');
-      out.textContent = `Código generado: ${prefix}-${seq}`;
-    }
-
-    function registro() {
-      const sub = subEl.value, ub = ubiEl.value.trim();
-      if (!sub || !ub || !CONFIG[sub]) {
-        out.textContent = 'Elegí elemento y ubicación';
-        return;
-      }
-      const {p,v} = CONFIG[sub];
-      const prefix = `AF${p}${sub}${ub}${v}`;
-      const key = prefix;
-      let cnt = parseInt(localStorage.getItem(key) || '0', 10);
-      cnt++;
-      localStorage.setItem(key, cnt);
-      const seq = String(cnt).padStart(3, '0');
-      out.textContent = `Código generado: ${prefix}-${seq}`;
-    }
-
-    subEl.addEventListener('change', actualizar);
-    ubiEl.addEventListener('input', actualizar);
-  </script>
-
+<body class="bg-gray-900 text-gray-200">
+    <noscript>Necesitas habilitar JavaScript para ejecutar esta aplicación.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>

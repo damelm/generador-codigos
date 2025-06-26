@@ -1,0 +1,5 @@
+{
+  "name": "Sistema de Gestión de Inventario",
+  "description": "Una aplicación de página única para gestionar un inventario de artículos, construida con React y Tailwind CSS. Permite añadir, editar, eliminar artículos, gestionar operaciones por lotes y generar informes.",
+  "requestFramePermissions": []
+}
